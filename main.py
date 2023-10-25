@@ -25,7 +25,7 @@ def main():
         task.run()
         print(f'Finished generation of task {task.task_id}')
 
-    for task in tasks[3:]:
+    for task in tasks:
         for i in range(len(task.bounds)):
             print(f'Running task {task.task_id} with bounds {task.bounds[i]}')
             task_runner = TinyGPRunner(task.filename(i))
@@ -35,12 +35,6 @@ def main():
         presentation.presentation_generation()
         print(f'Finished generating presentation of task {task.task_id}')
 
-    """
-    for task in tasks[:3]:
-        presentation = TinyGPPresentation(task)
-        presentation.presentation_generation()
-        print(f'Finished generating presentation of task {task.task_id}')
-    """
 
 if __name__ == '__main__':
     main()
