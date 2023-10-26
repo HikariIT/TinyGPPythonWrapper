@@ -27,7 +27,7 @@ def plot_function(f, bounds: tuple[float, float], bound_id: int):
 
 def main():
     plot_function(f_6_0, (-10.0, 10.0), 0)
-    plot_function(f_6_1, (0.0, 100.0), 1)
+    plot_function(f_6_1, (0.1, 100.0), 1)
     plot_function(f_6_2, (-1.0, 1.0), 2)
     plot_function(f_6_3, (-1000, 1000), 3)
 

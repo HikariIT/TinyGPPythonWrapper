@@ -1,4 +1,5 @@
 import subprocess
+import matplotlib.pyplot as plt
 
 
 class TinyGPRunner:
@@ -10,6 +11,8 @@ class TinyGPRunner:
 
     def run(self):
         best_individual = ''
+        best_fitness_values = []
+        avg_fitness_values = []
         with subprocess.Popen(['java', f'{self.JAVA_FILE_DIR}.{self.JAVA_CLASS_NAME}', self.problem_path],
                               stdout=subprocess.PIPE,
                               bufsize=1,
@@ -17,7 +20,12 @@ class TinyGPRunner:
 
             for line in p.stdout:
                 if 'Generation' in line:
-                    best_fitness = self.extract_best_fitness(line)
+                    best_fitness_values.append(self.extract_best_fitness(line))
+                    avg_fitness_values.append(self.extract_average_fitness(line))
+                    generation = self.extract_generation(line)
+
+                    if generation % 10 == 0:
+                        print(f'Generation {generation} finished')
 
                 if 'Best Individual' in line:
                     best_individual = line.replace('Best Individual: ', '').strip()
@@ -39,9 +47,22 @@ class TinyGPRunner:
             f.write(') -> float:\n')
             f.write(f'    return {best_individual}')
 
+        with open(f'functions/plots/{problem_name}.png', 'wb') as f:
+            plt.plot(range(1, len(best_fitness_values) + 1), best_fitness_values, label='Best fitness')
+            plt.plot(range(1, len(avg_fitness_values) + 1), avg_fitness_values, label='Average fitness')
+            plt.xlabel('Generation')
+            plt.ylabel('Fitness')
+            plt.title(f'Best and average fitness values for problem {problem_name}')
+            plt.legend()
+            plt.savefig(f, format='png')
+
     @staticmethod
     def extract_best_fitness(line: str) -> float:
         return float(line.split(' ')[4].replace('Fitness=', ''))
+
+    @staticmethod
+    def extract_average_fitness(line: str) -> float:
+        return float(line.split('')[2].replace('Fitness=', ''))
 
     @staticmethod
     def extract_generation(line: str) -> int:
